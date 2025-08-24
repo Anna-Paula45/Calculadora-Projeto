@@ -1,42 +1,70 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Calculadora</title>
-  <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    input { width: 50px; }
-    button { margin: 5px; }
-  </style>
-</head>
-<body>
-  <h1>Calculadora Simples</h1>
-  <input type="number" id="num1"> 
-  <select id="operador">
-    <option value="+">+</option>
-    <option value="-">-</option>
-    <option value="*">*</option>
-    <option value="/">/</option>
-  </select>
-  <input type="number" id="num2">
-  <button onclick="calcular()">=</button>
-  <h2 id="resultado"></h2>
+const despesasDoMes = useMemo(()=>despesas.filter(d => yyyymm(d.data) === mes), [despesas, mes]);
+const totalMes = useMemo(()=>despesasDoMes.reduce((acc, d) => acc + d.valor, 0), [despesasDoMes]);
+const porCategoria = useMemo(()=>{
+const mapa = {};
+for(const d of despesasDoMes){
+mapa[d.categoria] = (mapa[d.categoria] || 0) + d.valor;
+}
+return mapa;
+}, [despesasDoMes]);
 
-  <script>
-    function calcular() {
-      const n1 = parseFloat(document.getElementById('num1').value);
-      const n2 = parseFloat(document.getElementById('num2').value);
-      const op = document.getElementById('operador').value;
-      let res;
 
-      if (op === '+') res = n1 + n2;
-      else if (op === '-') res = n1 - n2;
-      else if (op === '*') res = n1 * n2;
-      else if (op === '/') res = n1 / n2;
+function adicionarDespesa(nova){ setDespesas(prev => [nova, ...prev]); }
+function excluirDespesa(id){ setDespesas(prev => prev.filter(d => d.id !== id)); }
 
-      document.getElementById('resultado').innerText = 'Resultado: ' + res;
-    }
-  </script>
+
+function adicionarCategoria(){
+const nome = prompt('Nome da nova categoria:')?.trim();
+if(!nome) return;
+if(categorias.includes(nome)) return alert('Categoria já existe.');
+setCategorias([...categorias, nome]);
+}
+
+
+function limparTudo(){
+if(confirm('Tem certeza que deseja limpar TODAS as despesas?')){
+setDespesas([]);
+}
+}
+
+
+return (
+<main className="space-y-6">
+<Header />
+
+
+<section className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+<FiltroMes mes={mes} setMes={setMes} />
+<div className="flex gap-2">
+<button onClick={adicionarCategoria} className="border px-3 py-2 rounded-xl">+ Categoria</button>
+<button onClick={limparTudo} className="border px-3 py-2 rounded-xl">Limpar tudo</button>
+</div>
+</section>
+
+
+<NovaDespesaForm onAdd={adicionarDespesa} categorias={categorias} />
+
+
+<CartoesResumo totalMes={totalMes} porCategoria={porCategoria} />
+
+
+<section className="bg-white rounded-2xl shadow p-4 space-y-3">
+<h2 className="text-xl font-semibold">Despesas do mês</h2>
+<TabelaDespesas itens={despesasDoMes} onDelete={excluirDespesa} />
+</section>
+
+
+<footer className="text-center text-xs text-slate-400 pt-4">
+Feito com React + Tailwind. Seus dados ficam somente no seu navegador (localStorage).
+</footer>
+</main>
+);
+}
+
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
 </body>
 </html>
-
-
