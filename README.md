@@ -5,7 +5,7 @@ Projeto criado em **React** com **HTML, CSS (Tailwind) e JavaScript**.
 
 ## 🚀 Como acessar
 Basta abrir no navegador:  
-👉 [ )
+👉 [file:///C:/Users/anapa/Downloads/index%20(1).html)
 
 ## ⚙️ Tecnologias utilizadas
 - React (via CDN)
